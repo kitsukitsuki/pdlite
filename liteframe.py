@@ -7,8 +7,11 @@ class DataFrameLite:
 
     @classmethod
     def from_dict(cls, data):
+        len_max = max([len(v) for v in data.values()])
+        index = list(range(0, len_max))
         columns = data.keys()
-        return cls(data=data, columns=columns)
+        data = {k: v + ['nan']*(len_max-len(v)) for k, v in data.items()}
+        return cls(data=data, index=index, columns=columns)
 
 
 class _AtIndexer:
@@ -28,6 +31,6 @@ class _AtIndexer:
 
 
 if __name__ == '__main__':
-    dfl = DataFrameLite.from_dict({'a': [0, 1], 'b': [2, 3]})
+    dfl = DataFrameLite.from_dict({'a': [0, 1, 2], 'b': [2, 3]})
     tmp = dfl.at[0, 'b']
     print(tmp)
