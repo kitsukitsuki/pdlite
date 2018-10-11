@@ -3,7 +3,9 @@ from collections import OrderedDict
 
 class DataFrameLite:
     def __init__(self, data=None, index=None, columns=None):
-        if isinstance(data, dict):
+        if isinstance(data, OrderedDict):
+            self.data = data
+        elif isinstance(data, dict):
             self.data = OrderedDict(data)
         else:
             self.data = data
@@ -16,7 +18,7 @@ class DataFrameLite:
         len_max = max([len(v) for v in data.values()])
         index = list(range(0, len_max))
         columns = data.keys()
-        data = {k: v + ['nan']*(len_max-len(v)) for k, v in data.items()}
+        data = OrderedDict({k: v + ['nan']*(len_max-len(v)) for k, v in data.items()})
         return cls(data=data, index=index, columns=columns)
 
 
