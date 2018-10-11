@@ -1,6 +1,12 @@
+from collections import OrderedDict
+
+
 class DataFrameLite:
     def __init__(self, data=None, index=None, columns=None):
-        self.data = data
+        if isinstance(data, dict):
+            self.data = OrderedDict(data)
+        else:
+            self.data = data
         self.index = index
         self.columns = columns
         self.at = _AtIndexer(self)
@@ -31,6 +37,6 @@ class _AtIndexer:
 
 
 if __name__ == '__main__':
-    dfl = DataFrameLite.from_dict({'a': [0, 1, 2], 'b': [2, 3]})
+    dfl = DataFrameLite.from_dict({'b': [0, 1, 2], 'a': [2, 3]})
     tmp = dfl.at[0, 'b']
     print(tmp)
