@@ -1,14 +1,15 @@
 from collections import OrderedDict
 
 
-class DataFrameLite:
+class DataFrameLite(object):
     def __init__(self, data=None, index=None, columns=None):
         if isinstance(data, OrderedDict):
-            self.data = data
+            data = data
         elif isinstance(data, dict):
-            self.data = OrderedDict(data)
+            data = OrderedDict(data)
         else:
-            self.data = data
+            data = data
+        self._data = data
         self.index = index
         self.columns = columns
         self.at = _AtIndexer(self)
@@ -21,8 +22,14 @@ class DataFrameLite:
         data = OrderedDict({k: v + ['nan']*(len_max-len(v)) for k, v in data.items()})
         return cls(data=data, index=index, columns=columns)
 
+    def _get_value(self, row, col):
+        return self._data[col][row]
 
-class _AtIndexer:
+    def _set_value(self, row, col, value):
+        self._data[col][row] = value
+
+
+class _AtIndexer(object):
     def __init__(self, frame):
         self.frame = frame
 
@@ -31,11 +38,13 @@ class _AtIndexer:
             row = key[0]
             col = key[1]
 
-            value = self.frame.data[col][row]
+            value = self.frame._get_value(row, col)
         else:
             raise ValueError('Invalid call for at access (getting)!')
 
         return value
+
+
 
 
 if __name__ == '__main__':
